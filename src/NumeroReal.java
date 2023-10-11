@@ -1,7 +1,8 @@
 public class NumeroReal extends ComponenteLexico {
     private float valor;
 
-    public NumeroReal(float valor) {
+    public NumeroReal(float valor, String etiqueta) {
+        super(etiqueta);
     }
 
     public float getValor() {
@@ -9,5 +10,6 @@ public class NumeroReal extends ComponenteLexico {
     }
 
     public String toString() {
+        return Float.toString(valor);
     }
 }

@@ -1,0 +1,15 @@
+{
+ float suma = 0.0;
+ int [10] v;
+ for (int k=0; k<10; k=k+1) {
+ if (k % 2 == 0)
+ suma = suma + k*10.5;
+ else
+ suma = suma + k*15.75;
+ v[i] = suma;
+ }
+ if (suma <= 25.0)
+ suma = suma / 2.5;
+ else
+ suma = suma * 4.5;
+}
