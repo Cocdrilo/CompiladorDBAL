@@ -27,7 +27,11 @@ public class AnalizadorSintactico {
             compara("comma");
             declaracion();
         }
-        compara("semicolon");
+        if(componenteLexico.getEtiqueta().equals("semicolon")){
+            compara("semicolon");
+            declaraciones();
+        }
+
     }
 
     public void tipo() {
@@ -41,7 +45,9 @@ public class AnalizadorSintactico {
     }
 
     public void declaracion() {
-        tipo();
+        if(componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float")) {
+            tipo();
+        }
         identificadores();
     }
 
@@ -50,7 +56,12 @@ public class AnalizadorSintactico {
             simbolos.put(componenteLexico.getValor(), tipo);  // Usamos getValor para obtener el nombre del identificador
             componenteLexico = lexico.getComponenteLexico();
             masIdentificadores();
-        } else {
+        } else if(componenteLexico.getEtiqueta().equals("end_program")){
+            return;
+        }
+
+        else {
+            System.out.println(componenteLexico.getEtiqueta());
             System.out.println("Error: Se esperaba un identificador");
         }
     }
@@ -60,7 +71,7 @@ public class AnalizadorSintactico {
         while (componenteLexico.getValor().equals("comma")) {
             compara("comma");
             if (componenteLexico.getEtiqueta().equals("id")) {
-                simbolos.put(componenteLexico.getEtiqueta(), tipo);
+                simbolos.put(componenteLexico.getValor(), tipo);
                 componenteLexico = lexico.getComponenteLexico();
             } else {
                 System.out.println("Error: Se esperaba un identificador");
@@ -69,11 +80,14 @@ public class AnalizadorSintactico {
     }
 
     public void compara(String token) {
-        if(this.componenteLexico.getEtiqueta().equals(token)) {
+        if (this.componenteLexico.getEtiqueta().equals(token)) {
             this.componenteLexico = this.lexico.getComponenteLexico();
-        }else {
-            System.out.println(this.componenteLexico.getEtiqueta());
-            System.out.println("Expected: " + token);
+        } else {
+            System.out.println("Error: Expected " + token + ", but found " + this.componenteLexico.getEtiqueta());
+            // Skip to the next token
+            this.componenteLexico = this.lexico.getComponenteLexico();
+            // Reset the tipo variable to avoid subsequent errors
+            this.tipo = null;
         }
     }
 
