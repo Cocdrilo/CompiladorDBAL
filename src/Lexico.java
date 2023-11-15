@@ -131,7 +131,10 @@ public class Lexico {
                 return new ComponenteLexico("open_parenthesis");
             case ')':
                 return new ComponenteLexico("closed_parenthesis");
+            case ',':
+                return new ComponenteLexico("comma");
             default:
+                System.out.println("Invalid character: " + this.caracter);
                 return new ComponenteLexico("invalid_char");
         }
     }

@@ -23,11 +23,21 @@ public class AnalizadorSintactico {
 
     public void declaraciones() {
         declaracion();
-        while (componenteLexico.getEtiqueta().equals("coma")) {
-            compara("coma");
+        while (componenteLexico.getEtiqueta().equals("comma")) {
+            compara("comma");
             declaracion();
         }
-        compara("punto_y_coma");
+        compara("semicolon");
+    }
+
+    public void tipo() {
+        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float")) {
+            tipo = componenteLexico.getValor();  // Usamos getValor para obtener el tipo real ("int" o "float")
+            componenteLexico = lexico.getComponenteLexico();
+        } else {
+            System.out.println(componenteLexico.getValor());
+            System.out.println("Error: Se esperaba int o float");
+        }
     }
 
     public void declaracion() {
@@ -35,18 +45,9 @@ public class AnalizadorSintactico {
         identificadores();
     }
 
-    public void tipo() {
-        if (componenteLexico.getEtiqueta().equals("int") || componenteLexico.getEtiqueta().equals("float")) {
-            tipo = componenteLexico.getEtiqueta();
-            componenteLexico = lexico.getComponenteLexico();
-        } else {
-            System.out.println("Error: Se esperaba int o float");
-        }
-    }
-
     public void identificadores() {
         if (componenteLexico.getEtiqueta().equals("id")) {
-            simbolos.put(componenteLexico.getEtiqueta(), tipo);
+            simbolos.put(componenteLexico.getValor(), tipo);  // Usamos getValor para obtener el nombre del identificador
             componenteLexico = lexico.getComponenteLexico();
             masIdentificadores();
         } else {
@@ -54,9 +55,10 @@ public class AnalizadorSintactico {
         }
     }
 
+
     public void masIdentificadores() {
-        while (componenteLexico.getEtiqueta().equals("coma")) {
-            compara("coma");
+        while (componenteLexico.getValor().equals("comma")) {
+            compara("comma");
             if (componenteLexico.getEtiqueta().equals("id")) {
                 simbolos.put(componenteLexico.getEtiqueta(), tipo);
                 componenteLexico = lexico.getComponenteLexico();
@@ -65,13 +67,12 @@ public class AnalizadorSintactico {
             }
         }
     }
-    
-
 
     public void compara(String token) {
         if(this.componenteLexico.getEtiqueta().equals(token)) {
             this.componenteLexico = this.lexico.getComponenteLexico();
         }else {
+            System.out.println(this.componenteLexico.getEtiqueta());
             System.out.println("Expected: " + token);
         }
     }
