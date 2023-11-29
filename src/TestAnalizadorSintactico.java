@@ -4,7 +4,7 @@ public class TestAnalizadorSintactico {
 
         boolean mostrarComponentesLexicos = true; //poner a false y no se quieren mostrar los tokens <id, a> ...
 
-        String expresion = "int a, b, c, d; float x, y, z;";
+        String expresion = "void main {int a, b, c, d; float x; int [10] v;}";
 
         ComponenteLexico etiquetaLexica;
         Lexico lexico = new Lexico(expresion);

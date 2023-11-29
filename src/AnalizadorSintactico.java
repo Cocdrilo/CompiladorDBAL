@@ -19,6 +19,7 @@ public class AnalizadorSintactico {
 
     public void analisisSintactico() {
         declaraciones();
+        //new
     }
 
     public void declaraciones() {
@@ -103,4 +104,27 @@ public class AnalizadorSintactico {
 
         return simbolos;
     }
+
+   /* public void tipo() {
+        if(this.componenteLexico.getEtiqueta().equals("int")) {
+            this.tipo = "int";
+            compara("int");
+        }else if(this.componenteLexico.getEtiqueta().equals("float")){
+            this.tipo = "float";
+            compara("float");
+        }
+    }*/
+
+    public void vector() {
+        // if needed
+    }
+
+
+    /*public void compara(String token) {
+        if(this.componenteLexico.getEtiqueta().equals(token)) {
+            this.componenteLexico = this.lexico.getComponenteLexico();
+        }else {
+            System.out.println("Expected: " + token);
+        }
+    }*/
 }
