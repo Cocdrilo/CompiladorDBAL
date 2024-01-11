@@ -105,6 +105,8 @@ public class Lexico {
             } else {
                 if (lexema.equals("void") || lexema.equals("main")) {
                     return new ComponenteLexico(lexema); // Tratar void y main como palabras reservadas
+                } else if (lexema.equals("true") || lexema.equals("false")) {
+                    return new ComponenteLexico("bool", lexema); // Tratar true y false como valores booleanos
                 } else {
                     return new ComponenteLexico("id", lexema);
                 }
@@ -151,3 +153,5 @@ public class Lexico {
         }
     }
 }
+
+//"void main {int alex, b05, cec9, d; float x; int [105] v98;int alex;}";

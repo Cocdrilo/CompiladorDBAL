@@ -36,7 +36,7 @@ public class AnalizadorSintactico {
 
     public void declaracion() {
         System.out.println("Declaracion");
-        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float")) {
+        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float") ||componenteLexico.getValor().equals("bool")){
             tipo();
         }
         identificadores();
@@ -106,12 +106,12 @@ public class AnalizadorSintactico {
     }
 
     public void tipo() {
-        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float")) {
+        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float") || componenteLexico.getValor().equals("bool")){
             tipo = componenteLexico.getValor();
             componenteLexico = lexico.getComponenteLexico();
         } else {
             System.out.println(componenteLexico.getValor());
-            System.out.println("Error: Se esperaba int o float");
+            System.out.println("Error: Se esperaba int o float o bool");
         }
     }
 
@@ -130,10 +130,9 @@ public class AnalizadorSintactico {
 
     public void vector() {
         componenteLexico = lexico.getComponenteLexico();
-        System.out.println("Vector: " + componenteLexico.getEtiqueta());
-        if (componenteLexico.getEtiqueta().equals("int")) {
+        if (componenteLexico.getEtiqueta().equals("int")||componenteLexico.getEtiqueta().equals("float")||componenteLexico.getEtiqueta().equals("bool")) {
             tamaño = Integer.parseInt(componenteLexico.getValor());
-            compara("int");
+            compara(componenteLexico.getEtiqueta());
         } else {
             System.out.println("Error: Se esperaba un número para el tamaño del vector");
         }
