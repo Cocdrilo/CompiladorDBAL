@@ -28,6 +28,7 @@ open_square_bracket [
 closed_square_bracket ]
 open_bracket {
 closed_bracket }
+end_program #
 // Palabras reservadas
 boolean boolean
 break break
@@ -40,3 +41,6 @@ if if
 int int
 while while
 true true
+main main
+print print
+void void
