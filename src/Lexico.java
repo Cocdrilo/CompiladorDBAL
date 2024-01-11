@@ -103,7 +103,11 @@ public class Lexico {
             if (this.palabrasReservadas.containsKey(lexema)) {
                 return new ComponenteLexico(this.palabrasReservadas.getEtiqueta(lexema));
             } else {
-                return new ComponenteLexico("id", lexema);
+                if (lexema.equals("void") || lexema.equals("main")) {
+                    return new ComponenteLexico(lexema); // Tratar void y main como palabras reservadas
+                } else {
+                    return new ComponenteLexico("id", lexema);
+                }
             }
 
         }

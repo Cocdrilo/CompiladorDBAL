@@ -67,12 +67,4 @@ public class PalabrasReservadas {
         return false;
     }
 
-    /*public String get(String lexema) {
-        return null;
-    }
-
-    public boolean containsKey(String lexema) {
-        return false;
-    }*/
-
 }
