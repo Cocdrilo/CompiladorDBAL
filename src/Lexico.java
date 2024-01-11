@@ -62,7 +62,33 @@ public class Lexico {
     public ComponenteLexico getComponenteLexico() {
         while (true) {
             this.caracter = extraeCaracter();
-            if (this.caracter == 0) {
+
+            // Ignorar comentarios
+            if (this.caracter == '/') {
+                if (extraeCaracter('*')) {
+                    while (true) {
+                        this.caracter = extraeCaracter();
+                        if (this.caracter == '*' && extraeCaracter('/')) {
+                            break;
+                        } else if (this.caracter == 0) {
+                            System.out.println("Error: Comentario no cerrado.");
+                            return new ComponenteLexico("invalid_comment");
+                        } else if (this.caracter == '\n') {
+                            this.lineas++;
+                        }
+                    }
+                } else if (extraeCaracter('/')) {
+                    while (this.caracter != '\n' && this.caracter != 0) {
+                        this.caracter = extraeCaracter();
+                    }
+                    if (this.caracter == '\n') {
+                        this.lineas++;
+                    }
+                } else {
+                    devuelveCaracter();
+                    break;
+                }
+            } else if (this.caracter == 0) {
                 return new ComponenteLexico("end_program");
             } else if (this.caracter == ' ' || (int) this.caracter == 9 || (int) this.caracter == 13) {
                 continue;

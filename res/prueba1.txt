@@ -1,4 +1,5 @@
 void main {
+//Serie de Fibonacci
  bool [10] f;
  f[0] = 0;
  f[1] = 1;
