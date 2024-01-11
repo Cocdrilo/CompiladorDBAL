@@ -18,6 +18,7 @@ public class AnalizadorSintactico {
     }
 
     public void analisisSintactico() {
+        analizaInicioFin();
         declaraciones();
         //new
     }
@@ -35,34 +36,43 @@ public class AnalizadorSintactico {
 
     }
 
-    public void tipo() {
-        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float")) {
-            tipo = componenteLexico.getValor();  // Usamos getValor para obtener el tipo real ("int" o "float")
-            componenteLexico = lexico.getComponenteLexico();
-        } else {
-            System.out.println(componenteLexico.getValor());
-            System.out.println("Error: Se esperaba int o float");
-        }
-    }
-
     public void declaracion() {
+        System.out.println("Declaracion");
         if(componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float")) {
             tipo();
         }
         identificadores();
     }
 
+    public void analizaInicioFin() {
+        compara("void");
+        compara("main");
+        compara("open_brace");
+    }
+
     public void identificadores() {
+
         if (componenteLexico.getEtiqueta().equals("id")) {
-            simbolos.put(componenteLexico.getValor(), tipo);  // Usamos getValor para obtener el nombre del identificador
-            componenteLexico = lexico.getComponenteLexico();
-            masIdentificadores();
+            if(!componenteLexico.getValor().equals("main") && !componenteLexico.getValor().equals("void")) {
+                System.out.println("Identificador: " + componenteLexico.getValor());
+                simbolos.put(componenteLexico.getValor(), tipo);  // Usamos getValor para obtener el nombre del identificador
+                componenteLexico = lexico.getComponenteLexico();
+
+                masIdentificadores();
+            }
+            else{
+                componenteLexico = lexico.getComponenteLexico();
+                masIdentificadores();
+            }
         } else if(componenteLexico.getEtiqueta().equals("end_program")){
             return;
+        } else if(componenteLexico.getEtiqueta().equals(("open_bracket"))){
+            System.out.println("Entre a OpenBracket:");
+            vector();
         }
 
         else {
-            System.out.println(componenteLexico.getEtiqueta());
+            System.out.println("No soy un identificador" + componenteLexico.getEtiqueta());
             System.out.println("Error: Se esperaba un identificador");
         }
     }
@@ -92,6 +102,16 @@ public class AnalizadorSintactico {
         }
     }
 
+    public void tipo() {
+        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float")) {
+            tipo = componenteLexico.getValor();  // Usamos getValor para obtener el tipo real ("int" o "float")
+            componenteLexico = lexico.getComponenteLexico();
+        } else {
+            System.out.println(componenteLexico.getValor());
+            System.out.println("Error: Se esperaba int o float");
+        }
+    }
+
     public String tablaSimbolos() {
         String simbolos = "";
 
@@ -116,7 +136,25 @@ public class AnalizadorSintactico {
     }*/
 
     public void vector() {
-        // if needed
+        if (componenteLexico.getEtiqueta().equals("open_bracket")) {
+            componenteLexico = lexico.getComponenteLexico();
+            System.out.println("Vector: " + componenteLexico.getEtiqueta());
+            compara("open_bracket"); // compara con '['
+            System.out.println("Tamaño: " + componenteLexico.getValor());
+            if (componenteLexico.getEtiqueta().equals("num")) {
+                tamaño = Integer.parseInt(componenteLexico.getValor());
+                compara("num");
+            } else {
+                System.out.println("Error: Se esperaba un número para el tamaño del vector");
+            }
+            compara("close_bracket"); // compara con ']'
+
+            // Actualiza la tabla de símbolos para el identificador actual como un vector
+            simbolos.put(componenteLexico.getValor(), "array(" + tipo + ", " + tamaño + ")");
+            componenteLexico = lexico.getComponenteLexico();
+        } else {
+            // No es un vector, no se hace nada
+        }
     }
 
 
