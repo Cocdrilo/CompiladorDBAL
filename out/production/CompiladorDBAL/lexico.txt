@@ -42,3 +42,4 @@ while while
 true true
 void void
 main main
+print print
