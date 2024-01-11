@@ -4,7 +4,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-
 public class PalabrasReservadas {
     /*
      * ComponentesLexicos es una tabla Hash (String, String) que
@@ -13,22 +12,19 @@ public class PalabrasReservadas {
      * la clave de la tabla y la etiqueta léxica el valor
      */
     private Hashtable<String, String> componentesLexicos;
-
-    public void ComponentesLexicos(String ficheroComponentesLexicos) {
+    public PalabrasReservadas(String ficheroComponentesLexicos) {
         this.componentesLexicos = new Hashtable<String, String>();
         leeComponentesLexicos(this.componentesLexicos,
                 ficheroComponentesLexicos);
     }
-
     public String getEtiqueta(String lexema) {
         return this.componentesLexicos.get(lexema);
     }
-
     public String getLexema(String etiquetaLexica) {
         String lexema = null;
         Set<Map.Entry<String, String>> s =
                 this.componentesLexicos.entrySet();
-        for (Map.Entry<String, String> m : s)
+        for(Map.Entry<String, String> m : s)
             if (m.getValue().equals(etiquetaLexica)) {
                 lexema = m.getKey();
                 break;
@@ -37,18 +33,15 @@ public class PalabrasReservadas {
     }
 
     private static boolean existeFichero(String fichero) {
-        File ficheroEntrada = new File(fichero);
+        File ficheroEntrada = new File (fichero);
         return ficheroEntrada.exists();
     }
-
     private static String etiqueta(String s) {
         return s.substring(0, s.indexOf("\t")).trim();
     }
-
     private static String lexema(String s) {
         return s.substring(s.lastIndexOf("\t") + 1).trim();
     }
-
     private static void leeComponentesLexicos(Hashtable<String, String>
                                                       componentesLexicos, String ficheroComponentesLexicos) {
         if (existeFichero(ficheroComponentesLexicos)) {
@@ -66,8 +59,20 @@ public class PalabrasReservadas {
                     }
                 }
                 fichero.close();
-            } catch (IOException e) {
-            }
+            } catch (IOException e) {}
         }
     }
+
+    public boolean containsKey(String lexema) {
+        return false;
+    }
+
+    /*public String get(String lexema) {
+        return null;
+    }
+
+    public boolean containsKey(String lexema) {
+        return false;
+    }*/
+
 }

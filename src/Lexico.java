@@ -1,12 +1,9 @@
-import java.util.Hashtable;
-
+import java.nio.charset.Charset;
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
 public class Lexico {
-    // palabrasReservadas: tabla Hash de palabras reservadas
-    // posicion: posición del carácter actual
-    // lineas: número de líneas del programa
-    // caracter: carácter actual devuelto por extraeCaracter()
-    // programa: código fuente del programa
-    private Hashtable<String, String> palabrasReservadas;
+    private PalabrasReservadas palabrasReservadas;
     private int posicion;
     private int lineas;
     private char caracter;
@@ -15,22 +12,25 @@ public class Lexico {
     public Lexico(String programa) {
         this.posicion = 0;
         this.lineas = 1;
-        // la tabla Hash de palabras reservadas almacena el lexema
-        // (clave) y el token (valor), la etiqueta del token coincide
-        // con el lexema de la palabra reservada
-        this.palabrasReservadas = new Hashtable<String, String>();
-        this.palabrasReservadas.put("break", "break");
-        this.palabrasReservadas.put("do", "do");
-        this.palabrasReservadas.put("else", "else");
-        this.palabrasReservadas.put("float", "float");
-        this.palabrasReservadas.put("for", "for");
-        this.palabrasReservadas.put("if", "if");
-        this.palabrasReservadas.put("int", "int");
-        this.palabrasReservadas.put("while", "while");
-        // al final del programa se añade el carácter 0 para indicar
-        // el final, cuando el analizador léxico encuentra este carácter
-        // devuelve el token “end_program”
-        this.programa = programa + (char) (0);
+        this.palabrasReservadas = new PalabrasReservadas("Lexico.txt");
+        this.programa = programa + (char) 0;
+    }
+    public Lexico(File ficheroEntrada, Charset utf8) {
+        try {
+            this.posicion = 0;
+            this.lineas = 1;
+            this.palabrasReservadas = new PalabrasReservadas("Lexico.txt");
+            this.programa = "";
+
+            Scanner scanner = new Scanner(ficheroEntrada, utf8);
+            while (scanner.hasNextLine()) {
+                this.programa += scanner.nextLine() + "\n";
+            }
+            this.programa += (char) 0;
+            scanner.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private char extraeCaracter() {
@@ -41,50 +41,38 @@ public class Lexico {
         this.posicion--;
     }
 
-    // extraeCaracter(char c) se usa para reconocer operadores con
-    // lexemas de dos caracteres: &&, ||, <=, >=, ==, !=
     private boolean extraeCaracter(char c) {
         if (this.posicion < this.programa.length() - 1) {
             this.caracter = extraeCaracter();
-            if (c == this.caracter)
+            if (c == this.caracter) {
                 return true;
-            else {
+            } else {
                 devuelveCaracter();
                 return false;
             }
-        } else
+        } else {
             return false;
+        }
     }
 
     public int getLineas() {
         return this.lineas;
     }
 
-    // la clase Character de Java ofrece los métodos:
-    // - Character.isDigit(char c): devuelve true si c es un dígito
-    // - Character.isLetter(char c): devuelve true si c es una letra
-    // - Character.isLetterOrDigir(char c): devuelve true si c es un
-    //  letra o un dígito
-    // estos métodos se usan para reconocer identificadores y números.
-    // aplicando las expresiones regulares:
-    // - id = letra (letra | digito )*
-    // - numero = digito+ ( . digito+ )?
     public ComponenteLexico getComponenteLexico() {
-        // el analizador léxico descarta los espacios (código 32),
-        // tabuladores (código 9) y saltos de línea (códigos 10 y 13)
         while (true) {
             this.caracter = extraeCaracter();
-            if (this.caracter == 0)
+            if (this.caracter == 0) {
                 return new ComponenteLexico("end_program");
-            else if (this.caracter == ' ' || (int) this.caracter == 9 ||
-                    (int) this.caracter == 13)
+            } else if (this.caracter == ' ' || (int) this.caracter == 9 || (int) this.caracter == 13) {
                 continue;
-            else if ((int) this.caracter == 10)
+            } else if ((int) this.caracter == 10) {
                 this.lineas++;
-            else
+            } else {
                 break;
+            }
         }
-        // secuencias de dígitos de números enteros o reales
+
         if (Character.isDigit(this.caracter)) {
             String numero = "";
             do {
@@ -93,7 +81,7 @@ public class Lexico {
             } while (Character.isDigit(this.caracter));
             if (this.caracter != '.') {
                 devuelveCaracter();
-                return new ComponenteLexico("int");
+                return new ComponenteLexico("int", numero);
             }
 
             do {
@@ -101,9 +89,9 @@ public class Lexico {
                 this.caracter = extraeCaracter();
             } while (Character.isDigit(this.caracter));
             devuelveCaracter();
-            return new ComponenteLexico("float");
+            return new ComponenteLexico("float", numero);
         }
-        // identificadores y palabras reservadas
+
         if (Character.isLetter(this.caracter)) {
             String lexema = "";
             do {
@@ -112,15 +100,14 @@ public class Lexico {
             } while (Character.isLetterOrDigit(this.caracter));
 
             devuelveCaracter();
-            if (this.palabrasReservadas.containsKey(lexema))
-                return new
-                        ComponenteLexico((String)
-                        this.palabrasReservadas.get(lexema));
-            else
-                return new ComponenteLexico("id");
+            if (this.palabrasReservadas.containsKey(lexema)) {
+                return new ComponenteLexico(this.palabrasReservadas.getEtiqueta(lexema));
+            } else {
+                return new ComponenteLexico("id", lexema);
+            }
+
         }
-        // operadores aritméticos, relacionales, lógicos y
-        // caracteres delimitadores
+
         switch (this.caracter) {
             case '=':
                 return new ComponenteLexico("assignment");
@@ -144,7 +131,18 @@ public class Lexico {
                 return new ComponenteLexico("open_parenthesis");
             case ')':
                 return new ComponenteLexico("closed_parenthesis");
+            case ',':
+                return new ComponenteLexico("comma");
+            case '{':
+                return new ComponenteLexico("open_brace");
+            case '}':
+                return new ComponenteLexico("close_brace");
+            case '[':
+                return new ComponenteLexico("open_bracket");
+            case ']':
+                return new ComponenteLexico("closed_bracket");
             default:
+                System.out.println("Invalid character: " + this.caracter);
                 return new ComponenteLexico("invalid_char");
         }
     }
