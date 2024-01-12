@@ -39,7 +39,7 @@ public class AnalizadorSintactico {
         if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float") || componenteLexico.getValor().equals("bool")){
             tipo();
         }
-        if (componenteLexico.getEtiqueta().equals("while")) {
+        if (componenteLexico.getEtiqueta().equals("while") || componenteLexico.getEtiqueta().equals("if") || componenteLexico.getEtiqueta().equals("do") || componenteLexico.getEtiqueta().equals("print")) {
             System.out.println(componenteLexico.getEtiqueta());
             instruccion();
         }
@@ -47,9 +47,6 @@ public class AnalizadorSintactico {
         identificadores();
         if (componenteLexico.getEtiqueta().equals("assignment")) {
             asignacionDeclaracion(); // Llamada a asignacionDeclaracion solo cuando hay una asignación
-        }
-        if (componenteLexico.getEtiqueta().equals("print")) {
-            instruccion();
         }
     }
 
@@ -176,8 +173,11 @@ public class AnalizadorSintactico {
         switch (valorActual) {
             case "if" -> {
                 compara("if");
+                System.out.println("if comparado");
                 compara("open_parenthesis");
+                System.out.println("open_parenthesis comparado");
                 expresionLogica();
+                System.out.println("expresion logica comparada");
                 compara("closed_parenthesis");
                 instruccion();
                 if (componenteLexico.getEtiqueta().equals("else")) {
@@ -193,9 +193,11 @@ public class AnalizadorSintactico {
                 System.out.println("open_parenthesis comparado");
                 expresionLogica();
                 compara("closed_parenthesis");
-                compara("open_brace"); // Agrega esto para manejar la apertura de llaves
-                instrucciones(); // Agrega instrucciones dentro del bucle while
-                compara("close_brace"); // Agrega esto para manejar el cierre de llaves
+                System.out.println("closed_parenthesis comparado");
+                compara("open_brace");
+                System.out.println("Empieza instruccion");
+                instrucciones();
+                compara("close_brace");
             }
             case "do" -> {
                 compara("do");
@@ -231,7 +233,7 @@ public class AnalizadorSintactico {
     }
 
     public void expresionLogica() {
-        System.out.println("Entre a expresion logica");
+        System.out.println("Entre a expresion logica " + componenteLexico.getEtiqueta());
         terminoLogico();
         while (componenteLexico.getEtiqueta().equals("or")) {
             compara("or");
@@ -240,7 +242,7 @@ public class AnalizadorSintactico {
     }
 
     public void expresion() {
-        System.out.println("Entre a expresion");
+        System.out.println("Entre a expresion " + componenteLexico.getEtiqueta());
         termino();
         while (esOperadorAditivo(componenteLexico.getEtiqueta())) {
             System.out.println("Entre a operador aditivo");
@@ -250,7 +252,7 @@ public class AnalizadorSintactico {
     }
 
     public void termino() {
-        System.out.println("Entre a termino");
+        System.out.println("Entre a termino" + componenteLexico.getEtiqueta());
         factor();
         while (esOperadorMultiplicativo(componenteLexico.getEtiqueta())) {
             componenteLexico = lexico.getComponenteLexico();
@@ -259,7 +261,7 @@ public class AnalizadorSintactico {
     }
 
     public void factor() {
-        System.out.println("Entre a factor");
+        System.out.println("Entre a factor" + componenteLexico.getEtiqueta());
         if (componenteLexico.getValor().equals("(")) {
             compara("open_parenthesis");
             expresion();
@@ -275,11 +277,11 @@ public class AnalizadorSintactico {
     }
 
     public void variable() {
-        System.out.println("Entre a variable");
+        System.out.println("Entre a variable" + componenteLexico.getEtiqueta());
         if (componenteLexico.getEtiqueta().equals("id")) {
             String nombreIdentificador = componenteLexico.getValor();
             // Verificar si es un arreglo
-            componenteLexico = lexico.getComponenteLexico();
+            //componenteLexico = lexico.getComponenteLexico();
             if (componenteLexico.getEtiqueta().equals("open_bracket")) {
                 compara("open_bracket");
                 expresion();
@@ -292,7 +294,7 @@ public class AnalizadorSintactico {
                 }
                 componenteLexico = lexico.getComponenteLexico();
             } else {
-                System.out.println("Entre a variable simple");
+                System.out.println("Entre a variable simple" + componenteLexico.getEtiqueta());
                 componenteLexico = lexico.getComponenteLexico();
                 if (simbolos.containsKey(nombreIdentificador)) {
                     System.out.println("Identificador: " + nombreIdentificador);
@@ -306,7 +308,7 @@ public class AnalizadorSintactico {
     }
 
     public void terminoLogico() {
-        System.out.println("Entre a termino logico");
+        System.out.println("Entre a termino logico" + componenteLexico.getEtiqueta());
         factorLogico();
         while (componenteLexico.getEtiqueta().equals("and")) {
             compara("and");
@@ -315,7 +317,7 @@ public class AnalizadorSintactico {
     }
 
     public void factorLogico() {
-        System.out.println("Entre a factor logico");
+        System.out.println("Entre a factor logico" + componenteLexico.getEtiqueta());
         if (componenteLexico.getEtiqueta().equals("not")) {
             compara("not");
             factorLogico();
@@ -327,7 +329,7 @@ public class AnalizadorSintactico {
     }
 
     public void expresionRelacional() {
-        System.out.println("Entre a expresion relacional");
+        System.out.println("Entre a expresion relacional" + componenteLexico.getEtiqueta());
         expresion();
         System.out.println("Expresion"+ componenteLexico.getEtiqueta());
         if (esOperadorRelacional(componenteLexico.getEtiqueta())) {
@@ -345,7 +347,7 @@ public class AnalizadorSintactico {
 
 
     public boolean esOperadorAditivo(String valor) {
-        System.out.println("He Adicionado");
+        //System.out.println("He Adicionado");
         return valor.equals("add") || valor.equals("substract");
     }
 
