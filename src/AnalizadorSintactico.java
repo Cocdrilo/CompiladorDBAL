@@ -81,7 +81,7 @@ public class AnalizadorSintactico {
         } else if (componenteLexico.getEtiqueta().equals("close_brace")) {
             System.out.println("Salgo de Encapsulamiento");
         } else {
-            System.out.println("No soy un identificador" + componenteLexico.getEtiqueta());
+            System.out.println("No soy un identificador " + componenteLexico.getEtiqueta());
         }
     }
 
@@ -190,7 +190,7 @@ public class AnalizadorSintactico {
                 expresionLogica();
                 System.out.println("expresionLogica fin");
                 System.out.println(componenteLexico.getEtiqueta());
-                expresionLogica();
+                //expresionLogica();
             }
             case "do" -> {
                 compara("do");
@@ -257,6 +257,10 @@ public class AnalizadorSintactico {
         } else if (componenteLexico.getEtiqueta().equals("int") || componenteLexico.getEtiqueta().equals("float") || componenteLexico.getEtiqueta().equals("bool")) {
             componenteLexico = lexico.getComponenteLexico();
             System.out.println("Entre a factor numerico");
+        } else if (componenteLexico.getValor().equals("less_than")) {
+            compara("less_than");
+            expresionLogica();
+
         } else {
             System.out.println("Error: Factor mal formado");
         }
