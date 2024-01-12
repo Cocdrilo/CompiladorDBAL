@@ -82,7 +82,7 @@ public class Lexico {
                         this.caracter = extraeCaracter();
                     }
                     if (this.caracter == '\n') {
-                        this.lineas++;
+                        System.out.println("Lineas");
                     }
                 } else {
                     return new ComponenteLexico("divide");
@@ -129,7 +129,7 @@ public class Lexico {
             if (this.palabrasReservadas.containsKey(lexema)) {
                 return new ComponenteLexico(this.palabrasReservadas.getEtiqueta(lexema));
             } else {
-                if (lexema.equals("void") || lexema.equals("main") ||lexema.equals ("while") || lexema.equals("print") || lexema.equals("if") || lexema.equals("else")) {
+                if (lexema.equals("void") || lexema.equals("main") ||lexema.equals ("while") || lexema.equals("print") || lexema.equals("if") || lexema.equals("else") || lexema.equals("do")) {
                     return new ComponenteLexico(lexema); // Tratar void y main como palabras reservadas
                 } else if (lexema.equals("true") || lexema.equals("false")) {
                     return new ComponenteLexico("bool", lexema); // Tratar true y false como valores booleanos
@@ -142,7 +142,11 @@ public class Lexico {
 
         switch (this.caracter) {
             case '=':
-                return new ComponenteLexico("assignment");
+                if (extraeCaracter('=')) {
+                    return new ComponenteLexico("equals");
+                } else {
+                    return new ComponenteLexico("assignment");
+                }
             case '<':
                 return new ComponenteLexico("less_than");
             case '>':

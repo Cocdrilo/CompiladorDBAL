@@ -43,7 +43,7 @@ public class AnalizadorSintactico {
             System.out.println(componenteLexico.getEtiqueta());
             instruccion();
         }
-        String tipoActual = componenteLexico.getEtiqueta(); // Almacena el tipo actual antes de avanzar al siguiente componente léxico
+        System.out.println("Etiqueta actual: " + componenteLexico.getEtiqueta());
         identificadores();
         if (componenteLexico.getEtiqueta().equals("assignment")) {
             asignacionDeclaracion(); // Llamada a asignacionDeclaracion solo cuando hay una asignación
