@@ -147,6 +147,12 @@ public class Lexico {
                 } else {
                     return new ComponenteLexico("assignment");
                 }
+            case'&':
+                if (extraeCaracter('&')) {
+                    return new ComponenteLexico("and");
+                } else {
+                    return new ComponenteLexico("invalid_char");
+                }
             case '<':
                 return new ComponenteLexico("less_than");
             case '>':
