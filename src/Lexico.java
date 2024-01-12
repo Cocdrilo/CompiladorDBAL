@@ -141,51 +141,76 @@ public class Lexico {
         }
 
         switch (this.caracter) {
-            case '=':
+            case '=' -> {
                 if (extraeCaracter('=')) {
                     return new ComponenteLexico("equals");
                 } else {
                     return new ComponenteLexico("assignment");
                 }
-            case'&':
+            }
+            case '&' -> {
                 if (extraeCaracter('&')) {
                     return new ComponenteLexico("and");
                 } else {
                     return new ComponenteLexico("invalid_char");
                 }
-            case '<':
+            }
+            case '|' -> {
+                if (extraeCaracter('|')) {
+                    return new ComponenteLexico("or");
+                } else {
+                    return new ComponenteLexico("invalid_char");
+                }
+            }
+            case '<' -> {
                 return new ComponenteLexico("less_than");
-            case '>':
+            }
+            case '>' -> {
                 return new ComponenteLexico("greater_than");
-            case '+':
+            }
+            case '+' -> {
                 return new ComponenteLexico("add");
-            case '-':
+            }
+            case '-' -> {
                 return new ComponenteLexico("subtract");
-            case '*':
+            }
+            case '*' -> {
                 return new ComponenteLexico("multiply");
-            case '/':
+            }
+            case '/' -> {
                 return new ComponenteLexico("divide");
-            case '%':
+            }
+            case '%' -> {
                 return new ComponenteLexico("remainder");
-            case ';':
+            }
+            case ';' -> {
                 return new ComponenteLexico("semicolon");
-            case '(':
+            }
+            case '(' -> {
                 return new ComponenteLexico("open_parenthesis");
-            case ')':
+            }
+            case ')' -> {
                 return new ComponenteLexico("closed_parenthesis");
-            case ',':
+            }
+            case ',' -> {
                 return new ComponenteLexico("comma");
-            case '{':
+            }
+            case '{' -> {
                 return new ComponenteLexico("open_brace");
-            case '}':
+            }
+            case '}' -> {
                 return new ComponenteLexico("close_brace");
-            case '[':
+            }
+            case '[' -> {
                 return new ComponenteLexico("open_bracket");
-            case ']':
+            }
+            case ']' -> {
                 return new ComponenteLexico("closed_bracket");
-            default:
+            }
+            default -> {
                 System.out.println("Invalid character: " + this.caracter);
                 return new ComponenteLexico("invalid_char");
+            }
         }
     }
 }
