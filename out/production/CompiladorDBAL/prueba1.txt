@@ -1,10 +1,7 @@
 void main {
-//Serie de Fibonacci
  bool [10] f;
  f[0] = 0;
  f[1] = 1;
  int i = 2;
- while (i < 10) {
- i = i + 1;
- }
+ f[i] = f[i-1] + f[i-2];
 }

@@ -85,8 +85,8 @@ public class Lexico {
                         this.lineas++;
                     }
                 } else {
-                    devuelveCaracter();
-                    break;
+                    return new ComponenteLexico("divide");
+                    //break;
                 }
             } else if (this.caracter == 0) {
                 return new ComponenteLexico("end_program");
