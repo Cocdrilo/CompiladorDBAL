@@ -39,9 +39,13 @@ public class AnalizadorSintactico {
         if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float") || componenteLexico.getValor().equals("bool")){
             tipo();
         }
+        if (componenteLexico.getEtiqueta().equals("while")) {
+            System.out.println(componenteLexico.getEtiqueta());
+            instruccion();
+        }
         String tipoActual = componenteLexico.getEtiqueta(); // Almacena el tipo actual antes de avanzar al siguiente componente léxico
         identificadores();
-        if (componenteLexico.getEtiqueta().equals("equal")) {
+        if (componenteLexico.getEtiqueta().equals("assignment")) {
             asignacionDeclaracion(); // Llamada a asignacionDeclaracion solo cuando hay una asignación
         }
     }
@@ -162,7 +166,8 @@ public class AnalizadorSintactico {
     }
 
     public void instruccion() {
-        String valorActual = componenteLexico.getValor();
+        String valorActual = componenteLexico.getEtiqueta();
+        System.out.println("Instruccion: " + valorActual);
 
         switch (valorActual) {
             case "if" -> {
@@ -171,17 +176,21 @@ public class AnalizadorSintactico {
                 expresionLogica();
                 compara("close_parenthesis");
                 instruccion();
-                if (componenteLexico.getValor().equals("else")) {
+                if (componenteLexico.getEtiqueta().equals("else")) {
                     compara("else");
                     instruccion();
                 }
             }
             case "while" -> {
+                System.out.println("Entre a while instruccion");
                 compara("while");
+                System.out.println("while comparado");
                 compara("open_parenthesis");
+                System.out.println("open_parenthesis comparado");
                 expresionLogica();
-                compara("close_parenthesis");
-                instruccion();
+                System.out.println("expresionLogica fin");
+                System.out.println(componenteLexico.getEtiqueta());
+                expresionLogica();
             }
             case "do" -> {
                 compara("do");
@@ -207,7 +216,7 @@ public class AnalizadorSintactico {
             default -> {
                 // Trata como asignación
                 variable();
-                compara("equal");
+                compara("assignment");
                 expresionLogica();
                 compara("semicolon");
             }
@@ -219,6 +228,37 @@ public class AnalizadorSintactico {
         while (componenteLexico.getEtiqueta().equals("or")) {
             compara("or");
             terminoLogico();
+        }
+    }
+
+    public void expresion() {
+        termino();
+        while (esOperadorAditivo(componenteLexico.getValor())) {
+            componenteLexico = lexico.getComponenteLexico();
+            termino();
+        }
+    }
+
+    public void termino() {
+        factor();
+        while (esOperadorMultiplicativo(componenteLexico.getValor())) {
+            componenteLexico = lexico.getComponenteLexico();
+            factor();
+        }
+    }
+
+    public void factor() {
+        if (componenteLexico.getValor().equals("(")) {
+            compara("open_parenthesis");
+            expresion();
+            compara("close_parenthesis");
+        } else if (componenteLexico.getEtiqueta().equals("id")) {
+            variable();
+        } else if (componenteLexico.getEtiqueta().equals("int") || componenteLexico.getEtiqueta().equals("float") || componenteLexico.getEtiqueta().equals("bool")) {
+            componenteLexico = lexico.getComponenteLexico();
+            System.out.println("Entre a factor numerico");
+        } else {
+            System.out.println("Error: Factor mal formado");
         }
     }
 
@@ -283,35 +323,7 @@ public class AnalizadorSintactico {
                 valor.equals(">=") || valor.equals("==") || valor.equals("!=");
     }
 
-    public void expresion() {
-        termino();
-        while (esOperadorAditivo(componenteLexico.getValor())) {
-            componenteLexico = lexico.getComponenteLexico();
-            termino();
-        }
-    }
 
-    public void termino() {
-        factor();
-        while (esOperadorMultiplicativo(componenteLexico.getValor())) {
-            componenteLexico = lexico.getComponenteLexico();
-            factor();
-        }
-    }
-
-    public void factor() {
-        if (componenteLexico.getValor().equals("(")) {
-            compara("open_parenthesis");
-            expresion();
-            compara("close_parenthesis");
-        } else if (componenteLexico.getEtiqueta().equals("id")) {
-            variable();
-        } else if (componenteLexico.getEtiqueta().equals("num")) {
-            componenteLexico = lexico.getComponenteLexico();
-        } else {
-            System.out.println("Error: Factor mal formado");
-        }
-    }
 
     public boolean esOperadorAditivo(String valor) {
         return valor.equals("+") || valor.equals("-");
@@ -322,20 +334,22 @@ public class AnalizadorSintactico {
     }
 
     public void asignacionDeclaracion() {
-        if (componenteLexico.getValor().equals("equal")) {
-            compara("equal");
+        System.out.println("AsignacionDeclaracion");
+        System.out.println("Etiqueta actual: " + componenteLexico.getEtiqueta());
+        if (componenteLexico.getEtiqueta().equals("open_bracket")) {
+            compara("open_bracket");
+            expresion();
+            compara("closed_bracket");
+            System.out.println("Salgo de vector");
+        }
+        System.out.println("Etiqueta actual: " + componenteLexico.getEtiqueta());
+        if (componenteLexico.getEtiqueta().equals("assignment")) {
+            System.out.println("Entre a igual");
+            compara("assignment");
+            System.out.println("Entre a expresionLogica"+componenteLexico.getEtiqueta());
             expresionLogica();
-            if(componenteLexico.getEtiqueta().equals("open_bracket")){
-                compara("open_bracket");
-                expresion();
-                compara("close_bracket");
-                System.out.println("Salgo de vector");
-            }
-            // Aquí puedes realizar las acciones necesarias para la asignación
-            compara("semicolon");
+
         } else {
-            // Si no hay operador de asignación, asumimos una declaración vacía
-            // y no actualizamos la tabla de símbolos
             compara("semicolon");
         }
     }
