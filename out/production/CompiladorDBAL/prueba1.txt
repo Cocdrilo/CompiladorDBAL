@@ -1,5 +1,5 @@
 void main {
- int a = 1, b = 2, c = (25 * (2 + a)) / (2 * b), d = a + 2*b + c;
+ int a = 1, b = 2, c = (25 * (2 + a)), d = a + 2*b + c;
  if (d >= 10 && d <= 20 || d < 5) {
  c = d - 5;
  } else {

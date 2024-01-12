@@ -163,10 +163,18 @@ public class Lexico {
                 }
             }
             case '<' -> {
-                return new ComponenteLexico("less_than");
+                if (extraeCaracter('=')) {
+                    return new ComponenteLexico("less_equals");
+                } else {
+                    return new ComponenteLexico("less_than");
+                }
             }
             case '>' -> {
-                return new ComponenteLexico("greater_than");
+                if (extraeCaracter('=')) {
+                    return new ComponenteLexico("greater_equals");
+                } else {
+                    return new ComponenteLexico("greater_than");
+                }
             }
             case '+' -> {
                 return new ComponenteLexico("add");
