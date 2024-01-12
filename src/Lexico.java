@@ -85,8 +85,8 @@ public class Lexico {
                         this.lineas++;
                     }
                 } else {
-                    devuelveCaracter();
-                    break;
+                    return new ComponenteLexico("divide");
+                    //break;
                 }
             } else if (this.caracter == 0) {
                 return new ComponenteLexico("end_program");
@@ -129,7 +129,7 @@ public class Lexico {
             if (this.palabrasReservadas.containsKey(lexema)) {
                 return new ComponenteLexico(this.palabrasReservadas.getEtiqueta(lexema));
             } else {
-                if (lexema.equals("void") || lexema.equals("main") ||lexema.equals ("while")) {
+                if (lexema.equals("void") || lexema.equals("main") ||lexema.equals ("while") || lexema.equals("print")) {
                     return new ComponenteLexico(lexema); // Tratar void y main como palabras reservadas
                 } else if (lexema.equals("true") || lexema.equals("false")) {
                     return new ComponenteLexico("bool", lexema); // Tratar true y false como valores booleanos
