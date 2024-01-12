@@ -279,16 +279,17 @@ public class AnalizadorSintactico {
     public void variable() {
         System.out.println("Entre a variable" + componenteLexico.getEtiqueta());
         if (componenteLexico.getEtiqueta().equals("id")) {
+            compara("id");
             if (componenteLexico.getEtiqueta().equals("open_bracket")) {
+                System.out.println("Entre a vector de variable");
                 compara("open_bracket");
+                System.out.println("Entre a expresion de variable");
                 expresion();
+                System.out.println("Sali de expresion de variable");
                 compara("closed_bracket");
-            } else {
-                System.out.println("Entre a variable simple" + componenteLexico.getEtiqueta());
-                componenteLexico = lexico.getComponenteLexico();
             }
         } else {
-            System.out.println("Error: Se esperaba un identificador");
+            componenteLexico = lexico.getComponenteLexico();
         }
     }
 
