@@ -279,28 +279,13 @@ public class AnalizadorSintactico {
     public void variable() {
         System.out.println("Entre a variable" + componenteLexico.getEtiqueta());
         if (componenteLexico.getEtiqueta().equals("id")) {
-            String nombreIdentificador = componenteLexico.getValor();
-            // Verificar si es un arreglo
-            //componenteLexico = lexico.getComponenteLexico();
             if (componenteLexico.getEtiqueta().equals("open_bracket")) {
                 compara("open_bracket");
                 expresion();
                 compara("closed_bracket");
-                // Actualizar la tabla de símbolos para el identificador como un arreglo
-                if (simbolos.containsKey(nombreIdentificador)) {
-                    asignacionDeclaracion();
-                } else {
-                    simbolos.put(nombreIdentificador, "array(" + tipo + ")");
-                }
-                componenteLexico = lexico.getComponenteLexico();
             } else {
                 System.out.println("Entre a variable simple" + componenteLexico.getEtiqueta());
                 componenteLexico = lexico.getComponenteLexico();
-                if (simbolos.containsKey(nombreIdentificador)) {
-                    System.out.println("Identificador: " + nombreIdentificador);
-                } else {
-                    System.out.println("Error: El identificador '" + nombreIdentificador + "' no ha sido declarado.");
-                }
             }
         } else {
             System.out.println("Error: Se esperaba un identificador");
