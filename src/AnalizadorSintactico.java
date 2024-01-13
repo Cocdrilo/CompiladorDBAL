@@ -76,7 +76,7 @@ public class AnalizadorSintactico {
         if (this.componenteLexico.getEtiqueta().equals(token)) {
             this.componenteLexico = this.lexico.getComponenteLexico();
         } else {
-            System.out.println("Error: Expected " + token + ", but found " + componenteLexico.getEtiqueta() + "  Valor: " + componenteLexico.getValor() + " Linea: " + lexico.getLineas());
+            System.out.println("Error: Expected " + token + ", but found " + componenteLexico.getEtiqueta());
             // Skip to the next token
             this.componenteLexico = this.lexico.getComponenteLexico();
             // Reset the tipo variable to avoid subsequent errors
