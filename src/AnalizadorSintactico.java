@@ -114,14 +114,12 @@ public class AnalizadorSintactico {
             componenteLexico = lexico.getComponenteLexico();
             if (componenteLexico.getEtiqueta().equals("open_square_bracket")) {
                 compara("open_square_bracket");
-                System.out.println("Estamos en el open bracket del vector");
                 tamaño = Integer.parseInt(componenteLexico.getValor());
                 componenteLexico = lexico.getComponenteLexico();
                 compara("closed_square_bracket");
                 simbolos.put(componenteLexico.getValor(), "array(" + tipo + ", " + tamaño + ")");
                 compara("id");
             }else{
-                System.out.println("entro a tipo primitivo" + " " +lexico.getLineas());
                 tipoPrimitivo();
             }
         }
@@ -149,12 +147,10 @@ public class AnalizadorSintactico {
     }
 
     public void instruccion() {
-        System.out.println("Estamos en instruccion " +componenteLexico.getEtiqueta() + componenteLexico.getValor());
         String valorActual = componenteLexico.getEtiqueta();
         switch (valorActual) {
             case "id" -> {
                 variable();
-                System.out.println("Salgo de Variable " + componenteLexico.getEtiqueta() + componenteLexico.getValor());
                 compara("assignment");
                 expresionLogica();
             }
@@ -292,7 +288,6 @@ public class AnalizadorSintactico {
 
 
     public boolean esOperadorAditivo(String valor) {
-        //System.out.println("He Adicionado");
         return valor.equals("add") || valor.equals("substract");
     }
 
