@@ -129,10 +129,12 @@ public class AnalizadorSintactico {
     }
 
     public void instruccion() {
+        System.out.println("Estamos en instruccion " +componenteLexico.getEtiqueta() + componenteLexico.getValor());
         String valorActual = componenteLexico.getEtiqueta();
         switch (valorActual) {
             case "id" -> {
                 variable();
+                System.out.println("Salgo de Variable " + componenteLexico.getEtiqueta() + componenteLexico.getValor());
                 compara("assignment");
                 expresionLogica();
             }
@@ -224,11 +226,15 @@ public class AnalizadorSintactico {
     }
 
     public void variable() {
+        System.out.println("Estamos en variable " + componenteLexico.getEtiqueta() + componenteLexico.getValor());
         if (componenteLexico.getEtiqueta().equals("id")) {
             compara("id");
+            System.out.println("id comparada" + componenteLexico.getEtiqueta() + componenteLexico.getValor());
             if (componenteLexico.getEtiqueta().equals("open_square_bracket")) {
                 compara("open_square_bracket");
+                System.out.println("open_square_bracket comparada" + componenteLexico.getEtiqueta() + componenteLexico.getValor());
                 expresion();
+                System.out.println("expresion comparada" + componenteLexico.getEtiqueta() + componenteLexico.getValor());
                 compara("closed_square_bracket");
             }
         } else {

@@ -129,38 +129,23 @@ public class Lexico {
             if (this.palabrasReservadas.containsKey(lexema)) {
                 return new ComponenteLexico(this.palabrasReservadas.getEtiqueta(lexema));
             } else {
-                switch(lexema){
-                    case "int":
-                        return new ComponenteLexico("int",lexema);
-                    case "float":
-                        return new ComponenteLexico("float",lexema);
-                    case "boolean":
-                        return new ComponenteLexico("boolean",lexema);
-                    case "break":
-                        return new ComponenteLexico("break",lexema);
-                    case "do":
-                        return new ComponenteLexico("do",lexema);
-                    case "else":
-                        return new ComponenteLexico("else",lexema);
-                    case "false":
-                        return new ComponenteLexico("false",lexema);
-                    case "for":
-                        return new ComponenteLexico("for",lexema);
-                    case "if":
-                        return new ComponenteLexico("if",lexema);
-                    case "while":
-                        return new ComponenteLexico("while",lexema);
-                    case "true":
-                        return new ComponenteLexico("true",lexema);
-                    case "void":
-                        return new ComponenteLexico("void",lexema);
-                    case "main":
-                        return new ComponenteLexico("main",lexema);
-                    case "print":
-                        return new ComponenteLexico("print",lexema);
-                    default:
-                        return new ComponenteLexico("id", lexema);
-                }
+                return switch (lexema) {
+                    case "int" -> new ComponenteLexico("int", lexema);
+                    case "float" -> new ComponenteLexico("float", lexema);
+                    case "boolean" -> new ComponenteLexico("boolean", lexema);
+                    case "break" -> new ComponenteLexico("break", lexema);
+                    case "do" -> new ComponenteLexico("do", lexema);
+                    case "else" -> new ComponenteLexico("else", lexema);
+                    case "false" -> new ComponenteLexico("false", lexema);
+                    case "for" -> new ComponenteLexico("for", lexema);
+                    case "if" -> new ComponenteLexico("if", lexema);
+                    case "while" -> new ComponenteLexico("while", lexema);
+                    case "true" -> new ComponenteLexico("true", lexema);
+                    case "void" -> new ComponenteLexico("void", lexema);
+                    case "main" -> new ComponenteLexico("main", lexema);
+                    case "print" -> new ComponenteLexico("print", lexema);
+                    default -> new ComponenteLexico("id", lexema);
+                };
             }
 
         }
@@ -206,7 +191,7 @@ public class Lexico {
                 return new ComponenteLexico("add");
             }
             case '-' -> {
-                return new ComponenteLexico("subtract");
+                return new ComponenteLexico("substract");
             }
             case '*' -> {
                 return new ComponenteLexico("multiply");
