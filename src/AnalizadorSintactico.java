@@ -19,88 +19,58 @@ public class AnalizadorSintactico {
     public void analisisSintactico() {
         analizaInicioFin();
         declaraciones();
-        //new
+        instrucciones();
+        procesarCierrePrograma();
     }
-
-    public void declaraciones() {
-        declaracion();
-        while (componenteLexico.getEtiqueta().equals("comma")) {
-            compara("comma");
-            declaracion();
-        }
-        if (componenteLexico.getEtiqueta().equals("semicolon")) {
-            compara("semicolon");
-            declaraciones();
-        }
-    }
-
-    public void declaracion() {
-        System.out.println("Declaracion");
-        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float") || componenteLexico.getValor().equals("bool")){
-            tipo();
-        }
-        if (componenteLexico.getEtiqueta().equals("while") || componenteLexico.getEtiqueta().equals("if") || componenteLexico.getEtiqueta().equals("do") || componenteLexico.getEtiqueta().equals("print")) {
-            System.out.println(componenteLexico.getEtiqueta());
-            instruccion();
-        }
-        System.out.println("Etiqueta actual: " + componenteLexico.getEtiqueta());
-        identificadores();
-        if (componenteLexico.getEtiqueta().equals("assignment")) {
-            asignacionDeclaracion(); // Llamada a asignacionDeclaracion solo cuando hay una asignación
-        }
-    }
-
     public void analizaInicioFin() {
         compara("void");
         compara("main");
         compara("open_brace");
     }
 
-    public void identificadores() {
-        if (componenteLexico.getEtiqueta().equals("id")) {
-            String nombreIdentificador = componenteLexico.getValor();
-            if (!nombreIdentificador.equals("main") && !nombreIdentificador.equals("void")) {
-                if (simbolos.containsKey(nombreIdentificador)) {
-                    //System.out.println("Error: El identificador '" + nombreIdentificador + "' ya ha sido declarado.");
-                } else {
-                    System.out.println("Identificador: " + nombreIdentificador);
-                    simbolos.put(nombreIdentificador, tipo);
-                }
-                componenteLexico = lexico.getComponenteLexico();
-                masIdentificadores();
-                asignacionDeclaracion(); // Llamada a asignacionDeclaracion con el nombre del identificador
-            } else {
-                componenteLexico = lexico.getComponenteLexico();
-                masIdentificadores();
+    private void procesarCierrePrograma() {
+        if (componenteLexico.getEtiqueta().equals("closed_bracket")) {
+            compara("closed_bracket");
+
+
+            if (componenteLexico.getEtiqueta().equals("end_program")) {
+                System.out.println("Programa compilado correctamente\n");
             }
-        } else if (componenteLexico.getEtiqueta().equals("end_program")) {
-            System.out.println("Fin Programa");
-            return;
-        } else if (componenteLexico.getEtiqueta().equals(("open_bracket"))) {
-            System.out.println("Entre a OpenBracket:");
-            vector();
-        } else if (componenteLexico.getEtiqueta().equals("close_brace")) {
-            System.out.println("Salgo de Encapsulamiento");
-        } else {
-            System.out.println("No soy un identificador" + componenteLexico.getEtiqueta());
         }
     }
 
+
+    public void declaraciones() {
+        declaracion();
+
+        if(componenteLexico.getEtiqueta().equals("semicolon")) {
+            compara("semicolon");
+            declaraciones();
+        }
+
+    }
+
+
+    public void declaracion() {
+        tipoVector();
+    }
+
+
+    public void listaIdentificadores() {
+        simbolos.put(componenteLexico.getValor(), tipo);
+        compara("id");
+        asignacionDeclaracion();
+        masIdentificadores();
+    }
+
     public void masIdentificadores() {
-        while (componenteLexico.getValor().equals("comma")) {
+        if (componenteLexico.getEtiqueta().equals("comma")) {
             compara("comma");
-            if (componenteLexico.getEtiqueta().equals("id")) {
-                String nombreIdentificador = componenteLexico.getValor();
-                if (simbolos.containsKey(nombreIdentificador)) {
-                    System.out.println("Error: El identificador '" + nombreIdentificador + "' ya ha sido declarado.");
-                } else {
-                    simbolos.put(nombreIdentificador, tipo);
-                }
-                componenteLexico = lexico.getComponenteLexico();
-                asignacionDeclaracion(); // Llamada a asignacionDeclaracion con el nombre del identificador
-            } else {
-                System.out.println("Error: Se esperaba un identificador");
-            }
+            String nombreIdentificador = componenteLexico.getValor();
+            simbolos.put(nombreIdentificador, tipo);
+            compara("id");
+            asignacionDeclaracion();
+            masIdentificadores();
         }
     }
 
@@ -116,13 +86,26 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void tipo() {
-        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float") || componenteLexico.getValor().equals("bool")){
+    public void tipoPrimitivo() {
+        listaIdentificadores();
+    }
+
+    public void tipoVector() {
+        if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float") || componenteLexico.getValor().equals("bool")) {
             tipo = componenteLexico.getValor();
             componenteLexico = lexico.getComponenteLexico();
-        } else {
-            System.out.println(componenteLexico.getValor());
-            System.out.println("Error: Se esperaba int o float o bool");
+
+            if (componenteLexico.getEtiqueta().equals("open_bracket")) {
+                compara("open_bracket");
+                System.out.println("Estamos en el open bracket del vector");
+                tamaño = Integer.parseInt(componenteLexico.getValor());
+                componenteLexico = lexico.getComponenteLexico();
+                compara("closed_bracket");
+                simbolos.put(componenteLexico.getValor(), "array(" + tipo + ", " + tamaño + ")");
+                compara("id");
+            }else{
+                tipoPrimitivo();
+            }
         }
     }
 
@@ -139,101 +122,66 @@ public class AnalizadorSintactico {
         return simbolos;
     }
 
-    public void vector() {
-        componenteLexico = lexico.getComponenteLexico();
-        if (componenteLexico.getEtiqueta().equals("int")||componenteLexico.getEtiqueta().equals("float")||componenteLexico.getEtiqueta().equals("bool")) {
-            tamaño = Integer.parseInt(componenteLexico.getValor());
-            compara(componenteLexico.getEtiqueta());
-        } else {
-            System.out.println("Error: Se esperaba un número para el tamaño del vector");
-        }
-        componenteLexico = lexico.getComponenteLexico();
-        // Actualiza la tabla de símbolos para el identificador actual como un vector
-        String nombreIdentificador = componenteLexico.getValor();
-        if (simbolos.containsKey(nombreIdentificador)) {
-            System.out.println("Error: El identificador '" + nombreIdentificador + "' ya ha sido declarado.");
-        } else {
-            simbolos.put(nombreIdentificador, "array(" + tipo + ", " + tamaño + ")");
-        }
-        componenteLexico = lexico.getComponenteLexico();
-    }
-
     public void instrucciones() {
         instruccion();
         while (componenteLexico.getEtiqueta().equals("semicolon")) {
             compara("semicolon");
-            instruccion();
+            instrucciones();
         }
     }
 
     public void instruccion() {
         String valorActual = componenteLexico.getEtiqueta();
-        System.out.println("Instruccion: " + valorActual);
-
         switch (valorActual) {
+            case "id" -> {
+                variable();
+                compara("assignment");
+                expresionLogica();
+            }
+            case "int", "float", "bool" -> {
+                declaracion();
+            }
             case "if" -> {
                 compara("if");
-                System.out.println("if comparado");
                 compara("open_parenthesis");
-                System.out.println("open_parenthesis comparado");
                 expresionLogica();
-                System.out.println("expresion logica comparada");
                 compara("closed_parenthesis");
                 instruccion();
-                if (componenteLexico.getEtiqueta().equals("else")) {
-                    compara("else");
-                    instruccion();
+            }
+            case "else" -> {
+                compara("else");
+                instruccion();
+            }
+
+            case "open_bracket" -> {
+                compara("open_bracket");
+                instrucciones();
+                if(componenteLexico.getEtiqueta().equals("closed_bracket")){
+                    compara("closed_bracket");
+                    instrucciones();
                 }
             }
             case "while" -> {
-                System.out.println("Entre a while instruccion");
                 compara("while");
-                System.out.println("while comparado");
                 compara("open_parenthesis");
-                System.out.println("open_parenthesis comparado");
                 expresionLogica();
                 compara("closed_parenthesis");
-                System.out.println("closed_parenthesis comparado");
-                compara("open_brace");
-                System.out.println("Empieza instruccion");
-                instrucciones();
-                compara("close_brace");
+                instruccion();
             }
             case "do" -> {
                 compara("do");
                 instruccion();
-                compara("while");
-                compara("open_parenthesis");
-                expresionLogica();
-                compara("closed_parenthesis");
-                compara("semicolon");
             }
             case "print" -> {
-                System.out.println("Entre a print");
                 compara("print");
-                System.out.println("print comparado");
                 compara("open_parenthesis");
-                expresion();
-                compara("closed_parenthesis");
-                compara("semicolon");
-            }
-            case "open_brace" -> {
-                compara("open_brace");
-                instrucciones();
-                compara("close_brace");
-            }
-            default -> {
-                // Trata como asignación
                 variable();
-                compara("assignment");
-                expresionLogica();
-                compara("semicolon");
+                compara("closed_parenthesis");
             }
         }
     }
 
     public void expresionLogica() {
-        System.out.println("Entre a expresion logica " + componenteLexico.getEtiqueta());
         terminoLogico();
         while (componenteLexico.getEtiqueta().equals("or")) {
             compara("or");
@@ -242,50 +190,47 @@ public class AnalizadorSintactico {
     }
 
     public void expresion() {
-        System.out.println("Entre a expresion " + componenteLexico.getEtiqueta());
         termino();
-        while (esOperadorAditivo(componenteLexico.getEtiqueta())) {
-            System.out.println("Entre a operador aditivo");
+        if(esOperadorAditivo(componenteLexico.getEtiqueta())){
             componenteLexico = lexico.getComponenteLexico();
             termino();
+            if(esOperadorAditivo(componenteLexico.getEtiqueta())){
+                componenteLexico = lexico.getComponenteLexico();
+                expresion();
+            }
         }
     }
 
     public void termino() {
-        System.out.println("Entre a termino" + componenteLexico.getEtiqueta());
         factor();
-        while (esOperadorMultiplicativo(componenteLexico.getEtiqueta())) {
+        if(esOperadorMultiplicativo(componenteLexico.getEtiqueta())){
             componenteLexico = lexico.getComponenteLexico();
             factor();
+            if(esOperadorAditivo(componenteLexico.getEtiqueta())) {
+                expresion();
+            } else if(esOperadorMultiplicativo(componenteLexico.getEtiqueta())){
+                expresion();
+            }
         }
     }
 
     public void factor() {
-        System.out.println("Entre a factor" + componenteLexico.getEtiqueta());
-        if (componenteLexico.getValor().equals("(")) {
+        if(componenteLexico.getEtiqueta().equals("id") || componenteLexico.getEtiqueta().equals("int") || componenteLexico.getEtiqueta().equals("float") || componenteLexico.getEtiqueta().equals("bool")){
+            variable();
+        } else if(componenteLexico.getEtiqueta().equals("open_parenthesis")){
             compara("open_parenthesis");
             expresion();
             compara("closed_parenthesis");
-        } else if (componenteLexico.getEtiqueta().equals("id")) {
-            variable();
-        } else if (componenteLexico.getEtiqueta().equals("int") || componenteLexico.getEtiqueta().equals("float") || componenteLexico.getEtiqueta().equals("bool")) {
-            componenteLexico = lexico.getComponenteLexico();
-            System.out.println("Entre a factor numerico");
-        } else {
-            System.out.println("Error: Factor mal formado");
+
         }
     }
 
     public void variable() {
-        System.out.println("Entre a variable" + componenteLexico.getEtiqueta());
         if (componenteLexico.getEtiqueta().equals("id")) {
             compara("id");
             if (componenteLexico.getEtiqueta().equals("open_bracket")) {
-                System.out.println("Entre a vector de variable");
                 compara("open_bracket");
-                System.out.println("Entre a expresion de variable");
                 expresion();
-                System.out.println("Sali de expresion de variable");
                 compara("closed_bracket");
             }
         } else {
@@ -294,30 +239,19 @@ public class AnalizadorSintactico {
     }
 
     public void terminoLogico() {
-        System.out.println("Entre a termino logico" + componenteLexico.getEtiqueta());
         factorLogico();
-        while (componenteLexico.getEtiqueta().equals("and")) {
+        if (componenteLexico.getEtiqueta().equals("and")) {
             compara("and");
             factorLogico();
         }
     }
 
     public void factorLogico() {
-        System.out.println("Entre a factor logico" + componenteLexico.getEtiqueta());
-        if (componenteLexico.getEtiqueta().equals("not")) {
-            compara("not");
-            factorLogico();
-        } else if (componenteLexico.getValor().equals("true") || componenteLexico.getValor().equals("false")) {
-            componenteLexico = lexico.getComponenteLexico();
-        } else {
-            expresionRelacional();
-        }
+        expresionRelacional();
     }
 
     public void expresionRelacional() {
-        System.out.println("Entre a expresion relacional" + componenteLexico.getEtiqueta());
         expresion();
-        System.out.println("Expresion"+ componenteLexico.getEtiqueta());
         if (esOperadorRelacional(componenteLexico.getEtiqueta())) {
             componenteLexico = lexico.getComponenteLexico();
             expresion();
@@ -325,7 +259,6 @@ public class AnalizadorSintactico {
     }
 
     public boolean esOperadorRelacional(String valor) {
-        System.out.println("Entre a operador relacional"+ valor);
         return valor.equals("less_than") || valor.equals("less_equals") || valor.equals("greater_than") ||
                 valor.equals("greater_equals") || valor.equals("equals") || valor.equals("not_equals");
     }
@@ -342,23 +275,9 @@ public class AnalizadorSintactico {
     }
 
     public void asignacionDeclaracion() {
-        System.out.println("AsignacionDeclaracion");
-        System.out.println("Etiqueta actual: " + componenteLexico.getEtiqueta());
-        if (componenteLexico.getEtiqueta().equals("open_bracket")) {
-            compara("open_bracket");
-            expresion();
-            compara("closed_bracket");
-            System.out.println("Salgo de vector");
-        }
-        System.out.println("Etiqueta actual: " + componenteLexico.getEtiqueta());
         if (componenteLexico.getEtiqueta().equals("assignment")) {
-            System.out.println("Entre a igual");
             compara("assignment");
-            System.out.println("Entre a expresionLogica"+componenteLexico.getEtiqueta());
             expresionLogica();
-
-        } else {
-            compara("semicolon");
         }
     }
 
