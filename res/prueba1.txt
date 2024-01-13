@@ -7,4 +7,3 @@ void main {
  d = a + 2*b + c;
  x = a + b + c + d;
 }
-

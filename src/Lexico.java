@@ -11,7 +11,7 @@ public class Lexico {
 
     public Lexico(String programa) {
         this.posicion = 0;
-        this.lineas = 0;
+        this.lineas = 1;
         this.palabrasReservadas = new PalabrasReservadas("Lexico.txt");
         this.programa = programa + (char) 0;
     }

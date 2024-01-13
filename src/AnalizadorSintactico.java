@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
@@ -7,6 +8,8 @@ public class AnalizadorSintactico {
     private Lexico lexico;
     private ComponenteLexico componenteLexico;
     private Hashtable<String, String> simbolos;
+    private ArrayList<String> errores;
+    private String valorAsignacion;
     private String tipo;
     private int tamaño;
 
@@ -14,6 +17,7 @@ public class AnalizadorSintactico {
         this.lexico = lexico;
         this.componenteLexico = this.lexico.getComponenteLexico();
         this.simbolos = new Hashtable<String, String>();
+        this.errores = new ArrayList<String>();
     }
 
     public void analisisSintactico() {
@@ -21,7 +25,12 @@ public class AnalizadorSintactico {
         declaraciones();
         instrucciones();
         procesarCierrePrograma();
+        if(!errores.isEmpty()){
+            System.out.println("Errores encontrados en el programa");
+            printErrores();
+        }
     }
+
     public void analizaInicioFin() {
         compara("void");
         compara("main");
@@ -35,6 +44,11 @@ public class AnalizadorSintactico {
             if (componenteLexico.getEtiqueta().equals("end_program")) {
                 System.out.println("Programa compilado correctamente\n");
             }
+        }
+    }
+    public void printErrores(){
+        for (String error : errores) {
+            System.out.println(error);
         }
     }
 
@@ -55,7 +69,13 @@ public class AnalizadorSintactico {
 
 
     public void listaIdentificadores() {
-        simbolos.put(componenteLexico.getValor(), tipo);
+        String nombreIdentificador = componenteLexico.getValor();
+
+        if (simbolos.containsKey(nombreIdentificador)) {
+            errores.add("Error in line  " + lexico.getLineas() + " : Variable '" + nombreIdentificador + "' already declared ");
+        } else {
+            simbolos.put(nombreIdentificador, tipo);
+        }
         compara("id");
         asignacionDeclaracion();
         masIdentificadores();
@@ -226,15 +246,17 @@ public class AnalizadorSintactico {
     }
 
     public void variable() {
-        System.out.println("Estamos en variable " + componenteLexico.getEtiqueta() + componenteLexico.getValor());
+
         if (componenteLexico.getEtiqueta().equals("id")) {
+            String nombreVariable = componenteLexico.getValor();
+
+            if (!simbolos.containsKey(nombreVariable)) {
+                errores.add("Error in line " + lexico.getLineas() + ": Variable '" + nombreVariable + "' not declared");
+            }
             compara("id");
-            System.out.println("id comparada" + componenteLexico.getEtiqueta() + componenteLexico.getValor());
             if (componenteLexico.getEtiqueta().equals("open_square_bracket")) {
                 compara("open_square_bracket");
-                System.out.println("open_square_bracket comparada" + componenteLexico.getEtiqueta() + componenteLexico.getValor());
                 expresion();
-                System.out.println("expresion comparada" + componenteLexico.getEtiqueta() + componenteLexico.getValor());
                 compara("closed_square_bracket");
             }
         } else {
@@ -283,9 +305,6 @@ public class AnalizadorSintactico {
             compara("assignment");
             expresionLogica();
         }
-    }
-    public void errores(){
-
     }
 
 }
