@@ -28,6 +28,8 @@ public class TestAnalizadorSintactico {
         System.out.println("Compilacion de sentencia de declaraciones de variables");
         System.out.println(expresion + "\n");
 
+
+
         System.out.println("Lineas: " + lexico.getLineas());
 
         compilador.analisisSintactico();

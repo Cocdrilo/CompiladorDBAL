@@ -25,7 +25,7 @@ public class AnalizadorSintactico {
     public void analizaInicioFin() {
         compara("void");
         compara("main");
-        compara("open_brace");
+        compara("open_bracket");
     }
 
     private void procesarCierrePrograma() {
@@ -41,7 +41,6 @@ public class AnalizadorSintactico {
 
     public void declaraciones() {
         declaracion();
-
         if(componenteLexico.getEtiqueta().equals("semicolon")) {
             compara("semicolon");
             declaraciones();
@@ -77,7 +76,7 @@ public class AnalizadorSintactico {
         if (this.componenteLexico.getEtiqueta().equals(token)) {
             this.componenteLexico = this.lexico.getComponenteLexico();
         } else {
-            System.out.println("Error: Expected " + token + ", but found " + this.componenteLexico.getEtiqueta());
+            System.out.println("Error: Expected " + token + ", but found " + componenteLexico.getEtiqueta() + "  Valor: " + componenteLexico.getValor() + " Linea: " + lexico.getLineas());
             // Skip to the next token
             this.componenteLexico = this.lexico.getComponenteLexico();
             // Reset the tipo variable to avoid subsequent errors
@@ -93,16 +92,16 @@ public class AnalizadorSintactico {
         if (componenteLexico.getValor().equals("int") || componenteLexico.getValor().equals("float") || componenteLexico.getValor().equals("bool")) {
             tipo = componenteLexico.getValor();
             componenteLexico = lexico.getComponenteLexico();
-
-            if (componenteLexico.getEtiqueta().equals("open_bracket")) {
-                compara("open_bracket");
+            if (componenteLexico.getEtiqueta().equals("open_square_bracket")) {
+                compara("open_square_bracket");
                 System.out.println("Estamos en el open bracket del vector");
                 tamaño = Integer.parseInt(componenteLexico.getValor());
                 componenteLexico = lexico.getComponenteLexico();
-                compara("closed_bracket");
+                compara("closed_square_bracket");
                 simbolos.put(componenteLexico.getValor(), "array(" + tipo + ", " + tamaño + ")");
                 compara("id");
             }else{
+                System.out.println("entro a tipo primitivo" + " " +lexico.getLineas());
                 tipoPrimitivo();
             }
         }
@@ -227,10 +226,10 @@ public class AnalizadorSintactico {
     public void variable() {
         if (componenteLexico.getEtiqueta().equals("id")) {
             compara("id");
-            if (componenteLexico.getEtiqueta().equals("open_bracket")) {
-                compara("open_bracket");
+            if (componenteLexico.getEtiqueta().equals("open_square_bracket")) {
+                compara("open_square_bracket");
                 expresion();
-                compara("closed_bracket");
+                compara("closed_square_bracket");
             }
         } else {
             componenteLexico = lexico.getComponenteLexico();
@@ -278,6 +277,9 @@ public class AnalizadorSintactico {
             compara("assignment");
             expresionLogica();
         }
+    }
+    public void errores(){
+
     }
 
 }

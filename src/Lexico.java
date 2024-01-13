@@ -82,7 +82,7 @@ public class Lexico {
                         this.caracter = extraeCaracter();
                     }
                     if (this.caracter == '\n') {
-                        System.out.println("Lineas");
+                        lineas++;
                     }
                 } else {
                     return new ComponenteLexico("divide");
@@ -129,18 +129,44 @@ public class Lexico {
             if (this.palabrasReservadas.containsKey(lexema)) {
                 return new ComponenteLexico(this.palabrasReservadas.getEtiqueta(lexema));
             } else {
-                if (lexema.equals("void") || lexema.equals("main") ||lexema.equals ("while") || lexema.equals("print") || lexema.equals("if") || lexema.equals("else") || lexema.equals("do")) {
-                    return new ComponenteLexico(lexema); // Tratar void y main como palabras reservadas
-                } else if (lexema.equals("true") || lexema.equals("false")) {
-                    return new ComponenteLexico("bool", lexema); // Tratar true y false como valores booleanos
-                } else {
-                    return new ComponenteLexico("id", lexema);
+                switch(lexema){
+                    case "int":
+                        return new ComponenteLexico("int",lexema);
+                    case "float":
+                        return new ComponenteLexico("float",lexema);
+                    case "boolean":
+                        return new ComponenteLexico("boolean",lexema);
+                    case "break":
+                        return new ComponenteLexico("break",lexema);
+                    case "do":
+                        return new ComponenteLexico("do",lexema);
+                    case "else":
+                        return new ComponenteLexico("else",lexema);
+                    case "false":
+                        return new ComponenteLexico("false",lexema);
+                    case "for":
+                        return new ComponenteLexico("for",lexema);
+                    case "if":
+                        return new ComponenteLexico("if",lexema);
+                    case "while":
+                        return new ComponenteLexico("while",lexema);
+                    case "true":
+                        return new ComponenteLexico("true",lexema);
+                    case "void":
+                        return new ComponenteLexico("void",lexema);
+                    case "main":
+                        return new ComponenteLexico("main",lexema);
+                    case "print":
+                        return new ComponenteLexico("print",lexema);
+                    default:
+                        return new ComponenteLexico("id", lexema);
                 }
             }
 
         }
 
         switch (this.caracter) {
+
             case '=' -> {
                 if (extraeCaracter('=')) {
                     return new ComponenteLexico("equals");
@@ -204,16 +230,16 @@ public class Lexico {
                 return new ComponenteLexico("comma");
             }
             case '{' -> {
-                return new ComponenteLexico("open_brace");
-            }
-            case '}' -> {
-                return new ComponenteLexico("close_brace");
-            }
-            case '[' -> {
                 return new ComponenteLexico("open_bracket");
             }
-            case ']' -> {
+            case '}' -> {
                 return new ComponenteLexico("closed_bracket");
+            }
+            case '[' -> {
+                return new ComponenteLexico("open_square_bracket");
+            }
+            case ']' -> {
+                return new ComponenteLexico("closed_square_bracket");
             }
             default -> {
                 System.out.println("Invalid character: " + this.caracter);

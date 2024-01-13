@@ -1,32 +1,16 @@
 void main {
- int a = 1, b = 2, c = (25 * (2 + a)) / (2 * b), d = a + 2*b + c;
-
- if (d >= 10 && d <= 20 || d < 5) {
- c = d - 5;
- } else {
- c = d + 5;
- }
-
- int i = 0;
-
- while (i <=10 && c >= 0) {
- c = c - 1;
+ int [10] f;
+ // sucesión de Fibonacci
+ f[0] = 0;
+ f[1] = 1;
+ int i = 2;
+ while (i < 10) {
+ f[i] = f[i-1] + f[i-2];
  i = i + 1;
  }
-
- if (a <= 10)
- c = 1;
- else {
- c = 2;
- do {
- c = c + 2;
- a = a - 1;
- } while (a >= 0);
+ i = 0;
+ while (i < 10) {
+ print(f[i]);
+ i = i + 1;
  }
-
- print(a);
- print(b);
- print(c);
- print(d);
-
 }
