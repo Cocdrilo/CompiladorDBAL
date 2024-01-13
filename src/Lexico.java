@@ -11,14 +11,14 @@ public class Lexico {
 
     public Lexico(String programa) {
         this.posicion = 0;
-        this.lineas = 1;
+        this.lineas = 0;
         this.palabrasReservadas = new PalabrasReservadas("Lexico.txt");
         this.programa = programa + (char) 0;
     }
     public Lexico(File ficheroEntrada, Charset utf8) {
         try {
             this.posicion = 0;
-            this.lineas = 1;
+            this.lineas = 0;
             this.palabrasReservadas = new PalabrasReservadas("Lexico.txt");
             this.programa = "";
 

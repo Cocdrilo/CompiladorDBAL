@@ -32,7 +32,6 @@ public class AnalizadorSintactico {
         if (componenteLexico.getEtiqueta().equals("closed_bracket")) {
             compara("closed_bracket");
 
-
             if (componenteLexico.getEtiqueta().equals("end_program")) {
                 System.out.println("Programa compilado correctamente\n");
             }
